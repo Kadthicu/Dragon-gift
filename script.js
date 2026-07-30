@@ -8,6 +8,9 @@
   let audioCtx;
   let heartTimer;
   let hearts = 0;
+  let heartCombo = 0;
+  let lastHeartHit = 0;
+  let heartWave = 0;
   let cakeCount = 0;
   let selectedDecor = "candle";
   let attempts = 0;
@@ -104,42 +107,81 @@
 
   function startHearts() {
     hearts = 0;
+    heartCombo = 0;
+    lastHeartHit = 0;
+    heartWave = 0;
     const field = document.getElementById("heartField");
     field.innerHTML = "";
     document.getElementById("heartCount").textContent = "0 / 27";
     document.querySelector("#game1 .progress i").style.width = "0%";
+    setHeartMessage("Соберите 27 сердечек!");
     clearInterval(heartTimer);
     spawnHeart();
-    heartTimer = setInterval(spawnHeart, 620);
+    heartTimer = setInterval(spawnHeart, 580);
+  }
+
+  function setHeartMessage(message, mood = "") {
+    const bubble = document.querySelector("#game1 .bubble");
+    const spark = document.querySelector("#game1 .heart-spark");
+    bubble.textContent = message;
+    spark?.classList.remove("spark-cheer", "spark-amazed");
+    if (mood) {
+      void spark?.offsetWidth;
+      spark?.classList.add(mood);
+    }
   }
 
   function spawnHeart() {
     if (hearts >= 27 || state.screen !== "game1") return;
     const field = document.getElementById("heartField");
     const heart = document.createElement("button");
-    heart.className = "flying-heart";
+    const paths = ["heart-rise", "heart-zigzag", "heart-sway", "heart-arc"];
+    const path = paths[heartWave++ % paths.length];
+    const progress = hearts / 27;
+    const lifetime = Math.max(2.8, 4.9 - progress * 1.5 + Math.random() * .7);
+    heart.className = "flying-heart " + path;
     heart.setAttribute("aria-label", "Сердечко");
     heart.textContent = ["❤️", "💖", "💗", "💕"][Math.floor(Math.random() * 4)];
-    heart.style.left = 4 + Math.random() * 78 + "%";
-    heart.style.animationDuration = 3.8 + Math.random() * 1.7 + "s";
+    heart.style.setProperty("--heart-x", 5 + Math.random() * 76 + "%");
+    heart.style.setProperty("--heart-drift", (Math.random() > .5 ? 1 : -1) * (28 + Math.random() * 42) + "px");
+    heart.style.animationDuration = lifetime + "s";
     heart.addEventListener("click", () => {
       if (heart.dataset.hit || transitionLocked) return;
       heart.dataset.hit = "1";
+      const now = performance.now();
+      heartCombo = now - lastHeartHit <= 1150 ? heartCombo + 1 : 1;
+      lastHeartHit = now;
       hearts++;
-      tone(560 + hearts * 45, .1, "triangle");
+      tone(560 + Math.min(hearts, 10) * 35, .1, "triangle");
       heart.textContent = "✨";
-      heart.style.animation = "pop .3s ease";
+      heart.className = "flying-heart heart-hit";
       document.getElementById("heartCount").textContent = hearts + " / 27";
       document.querySelector("#game1 .progress i").style.width = hearts / 27 * 48 + "%";
+      if (heartCombo >= 8) {
+        setHeartMessage("Невероятная серия ×" + heartCombo + "! Спарк в восторге!", "spark-amazed");
+      } else if (heartCombo >= 5) {
+        setHeartMessage("Волшебная серия ×" + heartCombo + "!", "spark-cheer");
+      } else if (heartCombo >= 3) {
+        setHeartMessage("Серия ×" + heartCombo + " — так держать!", "spark-cheer");
+      } else if (hearts === 9 || hearts === 18) {
+        setHeartMessage(hearts === 9 ? "Треть пути пройдена!" : "Осталась последняя треть!", "spark-cheer");
+      }
+      navigator.vibrate?.(heartCombo >= 3 ? 28 : 14);
       setTimeout(() => heart.remove(), 260);
       if (hearts === 27) {
         clearInterval(heartTimer);
+        setHeartMessage("Все 27 сердечек собраны! ❤️", "spark-amazed");
         tone(880, .25);
-        complete("game1", "game2");
+        complete("game1", "game2", 1100);
       }
     });
     field.appendChild(heart);
-    setTimeout(() => heart.remove(), 6000);
+    setTimeout(() => {
+      if (!heart.dataset.hit) {
+        heartCombo = 0;
+        heart.remove();
+      }
+    }, lifetime * 1000 + 120);
   }
 
   const decorButtons = [...document.querySelectorAll("[data-decor]")];
