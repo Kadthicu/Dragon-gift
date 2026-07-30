@@ -21,3 +21,27 @@
 /* Free cake decorating */
 .cake{touch-action:manipulation;cursor:crosshair}.cake-decor{pointer-events:none}.placed{transform:translate(-50%,-58%);user-select:none;filter:drop-shadow(0 4px 3px rgba(74,39,76,.2));z-index:6}.tray button.selected{background:#fff3a8;outline:4px solid rgba(107,74,227,.55);transform:translateY(-5px);box-shadow:0 12px 20px rgba(84,44,103,.28)}.cake-controls{padding-bottom:16px}.cake-controls p{min-height:2.7em}.cake-finish{margin-top:12px;padding:12px 16px;box-shadow:0 7px 0 #49319f,0 11px 20px rgba(77,43,163,.22)}.cake-finish[hidden]{display:none}.cake-finish:disabled{opacity:.85}.cake-nope{animation:cakeNope .35s ease}.candle{width:12px;height:38px;border-radius:4px 4px 2px 2px;background:repeating-linear-gradient(135deg,#fff 0 5px,#ff8aaa 5px 10px);box-shadow:inset -2px 0 rgba(140,45,89,.18),0 4px 5px rgba(74,39,76,.2)}.candle:before{content:"";position:absolute;left:50%;top:-7px;width:2px;height:8px;transform:translateX(-50%);border-radius:2px;background:#493b46}.candle:after{content:"";position:absolute;width:11px;height:16px;border-radius:60% 60% 55% 55%;left:50%;top:-19px;transform:translateX(-50%) scale(0);background:radial-gradient(circle at 50% 65%,#fff 0 18%,#ffe66d 25% 54%,#ff7b35 60%);filter:drop-shadow(0 0 7px #ffcf4d);transition:transform .35s ease}.candles-lit .candle:after{transform:translateX(-50%) scale(1);animation:flame 1s ease-in-out infinite}.candles-lit{filter:drop-shadow(0 0 18px rgba(255,213,75,.65))}
 @keyframes cakeNope{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes flame{50%{transform:translateX(-50%) scale(.82) rotate(5deg)}}
+
+
+/* Story link: symbolic gift awakens the family tree */
+.gift-magic{position:absolute;left:50%;bottom:72px;z-index:8;display:grid;gap:3px;min-width:210px;padding:12px 18px;border-radius:18px;background:rgba(255,255,255,.92);color:#5a398e;box-shadow:0 12px 30px rgba(68,36,111,.24);opacity:0;transform:translate(-50%,20px) scale(.85);pointer-events:none}
+.gift-magic:not(:empty){animation:giftReveal 1.9s ease forwards}
+.gift-magic b{font-family:"Marck Script",cursive;font-size:29px;color:#d84f91}.gift-magic span{font-size:13px}
+.magic-tree.magic-awakened{opacity:1;filter:drop-shadow(0 0 28px rgba(255,236,130,.9));animation:treeAwaken 1.8s ease both}
+.magic-tree.magic-awakened i{font-size:34px;text-shadow:0 0 16px #fff}
+.bloom-tree{position:relative;width:190px;height:170px;margin:-10px auto -30px;filter:drop-shadow(0 10px 14px rgba(59,32,77,.2))}
+.bloom-trunk{position:absolute;left:82px;bottom:0;width:28px;height:106px;border-radius:55% 45% 16% 16%;background:linear-gradient(90deg,#654067,#a46b5e,#59355f);transform-origin:bottom;animation:growTrunk .75s ease both}
+.bloom-crown{position:absolute;top:27px;width:112px;height:91px;border-radius:50%;background:radial-gradient(circle at 30% 35%,#d8ffd5,#69cb87 58%,#3fa96e);box-shadow:0 0 30px rgba(255,226,126,.48);opacity:0;transform:scale(.2);animation:growCrown .7s .55s ease forwards}
+.crown-left{left:12px}.crown-right{right:10px;animation-delay:.75s}
+.bloom-flower,.bloom-light{position:absolute;z-index:3;opacity:0;transform:scale(0);animation:bloomPop .45s 1.15s ease forwards}
+.f1{left:35px;top:47px}.f2{left:88px;top:25px;animation-delay:1.35s}.f3{right:28px;top:64px;animation-delay:1.55s}
+.bloom-light{color:#fff6a7;font-style:normal;text-shadow:0 0 11px #fff;font-size:22px;animation-name:lightIn,twinkle;animation-duration:.45s,1.6s;animation-delay:1.75s,2.2s;animation-fill-mode:forwards;animation-iteration-count:1,infinite}
+.l1{left:21px;top:25px}.l2{right:20px;top:30px;animation-delay:1.9s,2.35s}.l3{left:85px;top:76px;animation-delay:2.05s,2.5s}
+@keyframes giftReveal{0%{opacity:0;transform:translate(-50%,20px) scale(.85)}28%,72%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-95px) scale(.7)}}
+@keyframes treeAwaken{0%{transform:translateX(-50%) scale(.94);opacity:.46}45%{transform:translateX(-50%) scale(1.05);opacity:1}100%{transform:translateX(-50%) scale(1);opacity:1}}
+@keyframes growTrunk{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes growCrown{to{opacity:1;transform:scale(1)}}
+@keyframes bloomPop{70%{opacity:1;transform:scale(1.25)}100%{opacity:1;transform:scale(1)}}
+@keyframes lightIn{to{opacity:1;transform:scale(1)}}
+@media(max-height:720px){.bloom-tree{width:150px;height:125px;transform:scale(.78);margin:-18px auto -28px}}
+@media(prefers-reduced-motion:reduce){.gift-magic:not(:empty),.magic-tree.magic-awakened,.bloom-trunk,.bloom-crown,.bloom-flower,.bloom-light{animation-duration:.01ms!important;animation-delay:0ms!important}}
