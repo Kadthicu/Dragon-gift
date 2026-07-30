@@ -45,3 +45,22 @@
 @keyframes lightIn{to{opacity:1;transform:scale(1)}}
 @media(max-height:720px){.bloom-tree{width:150px;height:125px;transform:scale(.78);margin:-18px auto -28px}}
 @media(prefers-reduced-motion:reduce){.gift-magic:not(:empty),.magic-tree.magic-awakened,.bloom-trunk,.bloom-crown,.bloom-flower,.bloom-light{animation-duration:.01ms!important;animation-delay:0ms!important}}
+
+
+/* Heart game v3: varied paths, combos and Spark reactions */
+.flying-heart{left:var(--heart-x,50%);bottom:-58px;touch-action:manipulation;will-change:transform,opacity}
+.flying-heart.heart-rise{animation-name:heartRise}
+.flying-heart.heart-zigzag{animation-name:heartZigzag}
+.flying-heart.heart-sway{animation-name:heartSway}
+.flying-heart.heart-arc{animation-name:heartArc}
+.flying-heart.heart-hit{animation:pop .3s ease!important}
+.heart-spark.spark-cheer{animation:sparkCheer .55s ease 2}
+.heart-spark.spark-amazed{animation:sparkAmazed .75s ease 2}
+#game1 .bubble{transition:transform .2s,background .2s}
+@keyframes heartRise{0%{transform:translate3d(0,0,0) scale(.78);opacity:0}12%{opacity:1}100%{transform:translate3d(var(--heart-drift),-430px,0) scale(1.08) rotate(12deg);opacity:.15}}
+@keyframes heartZigzag{0%{transform:translate3d(0,0,0) scale(.8);opacity:0}12%{opacity:1}28%{transform:translate3d(var(--heart-drift),-115px,0) rotate(10deg)}55%{transform:translate3d(calc(var(--heart-drift) * -.7),-235px,0) rotate(-12deg)}78%{transform:translate3d(var(--heart-drift),-335px,0) rotate(8deg)}100%{transform:translate3d(0,-435px,0);opacity:.12}}
+@keyframes heartSway{0%{transform:translate3d(0,0,0) scale(.75);opacity:0}12%{opacity:1}25%{transform:translate3d(var(--heart-drift),-105px,0)}50%{transform:translate3d(calc(var(--heart-drift) * -.8),-220px,0)}75%{transform:translate3d(var(--heart-drift),-330px,0)}100%{transform:translate3d(calc(var(--heart-drift) * -.35),-440px,0);opacity:.1}}
+@keyframes heartArc{0%{transform:translate3d(0,0,0) scale(.72) rotate(-15deg);opacity:0}12%{opacity:1}45%{transform:translate3d(var(--heart-drift),-245px,0) scale(1.15) rotate(8deg)}100%{transform:translate3d(calc(var(--heart-drift) * -.45),-430px,0) scale(.9) rotate(-8deg);opacity:.1}}
+@keyframes sparkCheer{35%{transform:translateY(-13px) rotate(-5deg)}70%{transform:translateY(-5px) rotate(5deg)}}
+@keyframes sparkAmazed{35%{transform:translateY(-18px) scale(1.08) rotate(-7deg)}70%{transform:translateY(-8px) scale(1.04) rotate(7deg)}}
+@media (prefers-reduced-motion:reduce){.flying-heart{animation-duration:6s!important}.heart-spark.spark-cheer,.heart-spark.spark-amazed{animation:none}}
