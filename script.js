@@ -12,6 +12,8 @@
   let selectedDecor = "candle";
   let attempts = 0;
   let winningGift = Math.floor(Math.random() * 6);
+  const familyGifts = ["Тепло", "Верность", "Забота", "Смех", "Общие воспоминания"];
+  const foundGift = familyGifts[Math.floor(Math.random() * familyGifts.length)];
   let transitionLocked = false;
 
   function loadState() {
@@ -60,7 +62,7 @@
     tone(520, .07);
   }
 
-  function complete(id, next) {
+  function complete(id, next, delay = 850) {
     if (!state.completed.includes(id)) state.completed.push(id);
     saveState();
     transitionLocked = true;
@@ -69,7 +71,7 @@
       show(next, { force: true });
       if (next === "game1") startHearts();
       if (next === "final") celebrate();
-    }, 850);
+    }, delay);
   }
 
   function setSoundButton() {
@@ -208,11 +210,13 @@
     const number = Number(gift.dataset.gift);
     if (number === winningGift) {
       gift.classList.add("open");
-      gift.textContent = "✨";
+      gift.textContent = "💝";
       tone(940, .35, "triangle", .05);
-      document.getElementById("giftHint").textContent = "Вы нашли праздничное чудо!";
+      document.getElementById("giftHint").textContent = "Найден дар «" + foundGift + "»!";
+      document.getElementById("giftMagic").innerHTML = "<b>«" + foundGift + "»</b><span>летит к Дереву семьи ✨</span>";
+      document.querySelector(".magic-tree").classList.add("magic-awakened");
       document.querySelector("#game3 .progress i").style.width = "100%";
-      complete("game3", "final");
+      complete("game3", "final", 2200);
     } else {
       const distance = Math.abs(number - winningGift);
       const direction = number < winningGift ? "правее" : "левее";
@@ -244,7 +248,7 @@
 
   document.getElementById("hug").addEventListener("click", event => {
     event.currentTarget.textContent = "Спарк обнимает вас! ❤️";
-    document.querySelector(".final-dragon").classList.add("hugging");
+    document.querySelector(".final-spark").classList.add("hugging");
     navigator.vibrate?.([40, 40, 80]);
     celebrate();
   });
