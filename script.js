@@ -9,6 +9,7 @@
   let heartTimer;
   let hearts = 0;
   let cakeCount = 0;
+  let selectedDecor = "🕯️";
   let attempts = 0;
   let winningGift = Math.floor(Math.random() * 6);
   let transitionLocked = false;
@@ -139,23 +140,65 @@
     setTimeout(() => heart.remove(), 6000);
   }
 
-  document.querySelectorAll("[data-decor]").forEach(button => button.addEventListener("click", () => {
-    if (cakeCount >= 4 || transitionLocked || state.screen !== "game2") return;
-    cakeCount++;
-    tone(480 + cakeCount * 80, .11, "triangle");
-    const decor = document.createElement("span");
-    decor.className = "placed";
-    decor.textContent = button.dataset.decor;
-    decor.style.left = 48 + Math.random() * 145 + "px";
-    decor.style.top = 25 + Math.random() * 140 + "px";
-    document.getElementById("cakeDecor").appendChild(decor);
-    document.getElementById("cakeCount").textContent = cakeCount + " / 4";
-    document.querySelector("#game2 .progress i").style.width = 50 + cakeCount * 8 + "%";
-    if (cakeCount === 4) {
-      tone(900, .3);
-      complete("game2", "game3");
-    }
+  const decorButtons = [...document.querySelectorAll("[data-decor]")];
+  const cake = document.getElementById("cake");
+  const cakeDecor = document.getElementById("cakeDecor");
+  const lightCandles = document.getElementById("lightCandles");
+
+  decorButtons.forEach(button => button.addEventListener("click", () => {
+    selectedDecor = button.dataset.decor;
+    decorButtons.forEach(item => item.classList.toggle("selected", item === button));
+    document.getElementById("cakeInstruction").textContent = "Теперь нажмите на нужное место торта.";
+    tone(430, .06, "triangle");
   }));
+
+  cake.addEventListener("pointerdown", event => {
+    if (transitionLocked || state.screen !== "game2" || event.target.closest(".placed")) return;
+    const rect = cake.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const tiers = [
+      { top: 38, bottom: 100, half: 60 },
+      { top: 92, bottom: 166, half: 90 },
+      { top: 154, bottom: 238, half: 117 }
+    ];
+    const scaleX = rect.width / 250;
+    const scaleY = rect.height / 250;
+    const logicalX = x / scaleX;
+    const logicalY = y / scaleY;
+    const onCake = tiers.some(tier => logicalY >= tier.top && logicalY <= tier.bottom && Math.abs(logicalX - 125) <= tier.half);
+    if (!onCake) {
+      cake.classList.remove("cake-nope");
+      void cake.offsetWidth;
+      cake.classList.add("cake-nope");
+      document.getElementById("cakeInstruction").textContent = "Украшение нужно поставить прямо на торт 🙂";
+      tone(180, .08, "square", .018);
+      return;
+    }
+    cakeCount++;
+    const decor = document.createElement("span");
+    decor.className = "placed" + (selectedDecor === "🕯️" ? " candle" : "");
+    decor.textContent = selectedDecor;
+    decor.style.left = x / rect.width * 100 + "%";
+    decor.style.top = y / rect.height * 100 + "%";
+    cakeDecor.appendChild(decor);
+    tone(500 + Math.min(cakeCount, 8) * 55, .1, "triangle");
+    document.getElementById("cakeCount").textContent = cakeCount + " / минимум 4";
+    document.querySelector("#game2 .progress i").style.width = Math.min(82, 50 + cakeCount * 7) + "%";
+    document.getElementById("cakeInstruction").textContent = cakeCount < 4 ? "Отлично! Добавьте ещё " + (4 - cakeCount) + "." : "Красиво! Можно добавить ещё или зажечь свечи.";
+    if (cakeCount >= 4) lightCandles.hidden = false;
+  });
+
+  lightCandles.addEventListener("click", () => {
+    if (cakeCount < 4 || transitionLocked || state.screen !== "game2") return;
+    cake.classList.add("candles-lit");
+    lightCandles.disabled = true;
+    lightCandles.textContent = "Свечи зажжены! ✨";
+    document.getElementById("cakeInstruction").textContent = "Спарк в восторге от вашего торта!";
+    tone(900, .3, "triangle");
+    navigator.vibrate?.(45);
+    complete("game2", "game3");
+  });
 
   document.querySelectorAll(".gift").forEach(gift => gift.addEventListener("click", () => {
     if (gift.dataset.used || transitionLocked || state.screen !== "game3") return;
