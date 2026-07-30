@@ -6,6 +6,8 @@
   const defaults = { version: 3, screen: "intro", completed: [], soundOn: true };
   let state = loadState();
   let audioCtx;
+  let musicTimer;
+  let musicStep = 0;
   let heartTimer;
   let hearts = 0;
   let heartCombo = 0;
@@ -33,20 +35,58 @@
     try { localStorage.setItem(config.storageKey, JSON.stringify(state)); } catch {}
   }
 
-  function tone(f = 440, d = .08, type = "sine", v = .035) {
-    if (!state.soundOn) return;
+  function ensureAudio() {
+    if (!state.soundOn) return null;
     try {
       audioCtx ??= new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    } catch {
+      return null;
+    }
+  }
+
+  function tone(f = 440, d = .08, type = "sine", v = .035, delay = 0) {
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    try {
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const start = ctx.currentTime + delay;
       oscillator.type = type;
-      oscillator.frequency.value = f;
-      gain.gain.setValueAtTime(v, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime + d);
-      oscillator.connect(gain).connect(audioCtx.destination);
-      oscillator.start();
-      oscillator.stop(audioCtx.currentTime + d);
+      oscillator.frequency.setValueAtTime(f, start);
+      gain.gain.setValueAtTime(.0001, start);
+      gain.gain.exponentialRampToValueAtTime(v, start + .018);
+      gain.gain.exponentialRampToValueAtTime(.0001, start + d);
+      oscillator.connect(gain).connect(ctx.destination);
+      oscillator.start(start);
+      oscillator.stop(start + d + .03);
     } catch {}
+  }
+
+  function sparkle(notes, spacing = .085, volume = .025) {
+    notes.forEach((frequency, index) => tone(frequency, .18, "triangle", volume, index * spacing));
+  }
+
+  function playAmbientStep() {
+    if (!state.soundOn || document.hidden) return;
+    const melody = [523, 659, 784, 659, 587, 698, 880, 698, 523, 659, 784, 1046, 880, 784, 659, 587];
+    const note = melody[musicStep % melody.length];
+    tone(note, 1.35, "sine", .009);
+    if (musicStep % 4 === 0) tone(note / 2, 1.8, "sine", .004);
+    musicStep++;
+  }
+
+  function startMusic() {
+    if (!state.soundOn || musicTimer) return;
+    if (!ensureAudio()) return;
+    playAmbientStep();
+    musicTimer = setInterval(playAmbientStep, 920);
+  }
+
+  function stopMusic() {
+    clearInterval(musicTimer);
+    musicTimer = null;
   }
 
   function allowed(id) {
@@ -63,6 +103,7 @@
     saveState();
     window.scrollTo({ top: 0, behavior: "smooth" });
     tone(520, .07);
+    startMusic();
   }
 
   function complete(id, next, delay = 850) {
@@ -78,15 +119,30 @@
   }
 
   function setSoundButton() {
-    document.getElementById("sound").textContent = state.soundOn ? "🔊" : "🔇";
+    const button = document.getElementById("sound");
+    button.textContent = state.soundOn ? "🔊" : "🔇";
+    button.setAttribute("aria-label", state.soundOn ? "Выключить музыку и звуки" : "Включить музыку и звуки");
+    button.title = state.soundOn ? "Выключить звук" : "Включить звук";
+    button.setAttribute("aria-pressed", String(state.soundOn));
   }
 
   document.getElementById("sound").addEventListener("click", event => {
     state.soundOn = !state.soundOn;
     saveState();
     setSoundButton();
-    if (state.soundOn) tone(660, .1);
+    if (state.soundOn) {
+      sparkle([523, 659, 784], .07, .022);
+      startMusic();
+    } else {
+      stopMusic();
+    }
     event.currentTarget.blur();
+  });
+
+  document.addEventListener("pointerdown", () => startMusic(), { once: true, passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopMusic();
+    else startMusic();
   });
 
   document.getElementById("resetProgress").addEventListener("click", () => {
@@ -155,7 +211,7 @@
       heartCombo = now - lastHeartHit <= 1150 ? heartCombo + 1 : 1;
       lastHeartHit = now;
       hearts++;
-      tone(560 + Math.min(hearts, 10) * 35, .1, "triangle");
+      tone(560 + Math.min(hearts, 10) * 35, .12, "triangle", .028);
       heart.textContent = "✨";
       heart.className = "flying-heart heart-hit";
       document.getElementById("heartCount").textContent = hearts + " / 27";
@@ -174,7 +230,7 @@
       if (hearts === 27) {
         clearInterval(heartTimer);
         setHeartMessage("Все 27 сердечек собраны! ❤️", "spark-amazed");
-        tone(880, .25);
+        sparkle([659, 784, 988, 1175], .08, .03);
         complete("game1", "game2", 1100);
       }
     });
@@ -230,7 +286,7 @@
     decor.style.left = x / rect.width * 100 + "%";
     decor.style.top = y / rect.height * 100 + "%";
     cakeDecor.appendChild(decor);
-    tone(500 + Math.min(cakeCount, 8) * 55, .1, "triangle");
+    tone(500 + Math.min(cakeCount, 8) * 55, .13, "triangle", .026);
     document.getElementById("cakeCount").textContent = cakeCount + " / минимум 4";
     document.querySelector("#game2 .progress i").style.width = Math.min(82, 50 + cakeCount * 7) + "%";
     document.getElementById("cakeInstruction").textContent = cakeCount < 4 ? "Отлично! Добавьте ещё " + (4 - cakeCount) + "." : "Красиво! Можно добавить ещё или зажечь свечи.";
@@ -243,7 +299,7 @@
     lightCandles.disabled = true;
     lightCandles.textContent = "Свечи зажжены! ✨";
     document.getElementById("cakeInstruction").textContent = "Спарк в восторге от вашего торта!";
-    tone(900, .3, "triangle");
+    sparkle([523, 659, 784, 1046], .09, .034);
     navigator.vibrate?.(45);
     complete("game2", "game3");
   });
@@ -256,7 +312,7 @@
     if (number === winningGift) {
       gift.classList.add("open");
       gift.textContent = "💝";
-      tone(940, .35, "triangle", .05);
+      sparkle([587, 740, 880, 1175], .1, .04);
       document.getElementById("giftHint").textContent = "Найден дар «" + foundGift + "»!";
       document.getElementById("giftMagic").innerHTML = "<b>«" + foundGift + "»</b><span>летит к Дереву семьи ✨</span>";
       document.querySelector(".magic-tree").classList.add("magic-awakened");
@@ -288,13 +344,14 @@
       piece.style.animationDuration = 2.5 + Math.random() * 2 + "s";
       box.appendChild(piece);
     }
-    [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tone(f, .22, "triangle", .03), i * 130));
+    sparkle([523, 659, 784, 1046, 1319], .13, .035);
   }
 
   document.getElementById("hug").addEventListener("click", event => {
     event.currentTarget.textContent = "Спарк обнимает вас! ❤️";
     document.querySelector(".final-spark").classList.add("hugging");
     navigator.vibrate?.([40, 40, 80]);
+    sparkle([784, 988, 1175], .1, .03);
     celebrate();
   });
 
