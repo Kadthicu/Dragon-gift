@@ -9,7 +9,7 @@
   let heartTimer;
   let hearts = 0;
   let cakeCount = 0;
-  let selectedDecor = "🕯️";
+  let selectedDecor = "candle";
   let attempts = 0;
   let winningGift = Math.floor(Math.random() * 6);
   let transitionLocked = false;
@@ -177,8 +177,9 @@
     }
     cakeCount++;
     const decor = document.createElement("span");
-    decor.className = "placed" + (selectedDecor === "🕯️" ? " candle" : "");
-    decor.textContent = selectedDecor;
+    decor.className = "placed" + (selectedDecor === "candle" ? " candle" : "");
+    decor.textContent = selectedDecor === "candle" ? "" : selectedDecor;
+    if (selectedDecor === "candle") decor.setAttribute("aria-label", "Потушенная свеча");
     decor.style.left = x / rect.width * 100 + "%";
     decor.style.top = y / rect.height * 100 + "%";
     cakeDecor.appendChild(decor);
