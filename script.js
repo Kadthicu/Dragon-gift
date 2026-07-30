@@ -143,7 +143,10 @@
     heart.setAttribute("aria-label", "Сердечко");
     heart.textContent = ["❤️", "💖", "💗", "💕"][Math.floor(Math.random() * 4)];
     heart.style.setProperty("--heart-x", 5 + Math.random() * 76 + "%");
-    heart.style.setProperty("--heart-drift", (Math.random() > .5 ? 1 : -1) * (28 + Math.random() * 42) + "px");
+    const drift = (Math.random() > .5 ? 1 : -1) * (28 + Math.random() * 42);
+    heart.style.setProperty("--heart-drift", drift + "px");
+    heart.style.setProperty("--heart-drift-back", drift * -.7 + "px");
+    heart.style.setProperty("--heart-drift-soft", drift * -.35 + "px");
     heart.style.animationDuration = lifetime + "s";
     heart.addEventListener("click", () => {
       if (heart.dataset.hit || transitionLocked) return;
