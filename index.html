@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#6d4aff" />
+  <title>Дракончик и Праздник Любви</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Marck+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="app" class="app">
+    <div class="sky-decor" aria-hidden="true"></div>
+    <section class="screen active" id="intro">
+      <div class="card hero-card">
+        <div class="dragon-wrap" aria-label="Маленький дракончик Спарк">
+          <svg class="dragon" viewBox="0 0 360 320" role="img">
+            <defs>
+              <linearGradient id="bodyG" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8af3a7"/><stop offset="1" stop-color="#35b77a"/></linearGradient>
+              <linearGradient id="bellyG" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff4b8"/><stop offset="1" stop-color="#ffd66b"/></linearGradient>
+            </defs>
+            <ellipse cx="180" cy="282" rx="105" ry="20" fill="#241755" opacity=".22"/>
+            <path d="M110 180 C60 135 45 205 96 225 C64 225 50 255 93 257 C132 259 138 222 140 199Z" fill="#7c5cff"/>
+            <path d="M250 180 C300 135 315 205 264 225 C296 225 310 255 267 257 C228 259 222 222 220 199Z" fill="#7c5cff"/>
+            <ellipse cx="180" cy="199" rx="79" ry="91" fill="url(#bodyG)"/>
+            <ellipse cx="180" cy="220" rx="43" ry="60" fill="url(#bellyG)"/>
+            <circle cx="180" cy="111" r="78" fill="url(#bodyG)"/>
+            <path d="M126 60 L104 22 L148 43Z" fill="#ffd36a"/>
+            <path d="M234 60 L256 22 L212 43Z" fill="#ffd36a"/>
+            <ellipse cx="150" cy="105" rx="25" ry="31" fill="#fff"/>
+            <ellipse cx="210" cy="105" rx="25" ry="31" fill="#fff"/>
+            <circle cx="157" cy="111" r="11" fill="#302356"/><circle cx="203" cy="111" r="11" fill="#302356"/>
+            <circle cx="160" cy="107" r="4" fill="#fff"/><circle cx="206" cy="107" r="4" fill="#fff"/>
+            <ellipse cx="180" cy="140" rx="39" ry="27" fill="#b4f5c8"/>
+            <circle cx="167" cy="137" r="4" fill="#2a7b5c"/><circle cx="193" cy="137" r="4" fill="#2a7b5c"/>
+            <path d="M160 151 Q180 169 200 151" fill="none" stroke="#2d6e58" stroke-width="6" stroke-linecap="round"/>
+            <path d="M115 195 Q72 205 82 245 Q118 236 142 215" fill="url(#bodyG)"/>
+            <path d="M245 195 Q288 205 278 245 Q242 236 218 215" fill="url(#bodyG)"/>
+            <path d="M150 276 Q136 299 111 289" fill="none" stroke="#35b77a" stroke-width="18" stroke-linecap="round"/>
+            <path d="M210 276 Q224 299 249 289" fill="none" stroke="#35b77a" stroke-width="18" stroke-linecap="round"/>
+          </svg>
+          <div class="sparkle s1">✦</div><div class="sparkle s2">✦</div><div class="sparkle s3">✦</div>
+        </div>
+        <p class="eyebrow">Небольшое волшебное приключение</p>
+        <h1>Дракончик и<br><span>Праздник Любви</span></h1>
+        <div class="speech">
+          <strong>Привет! Я Спарк.</strong>
+          <p>Сегодня особенный день, но праздничная магия разлетелась по долине. Поможете мне вернуть её?</p>
+        </div>
+        <button class="primary" data-next="game1">Начать приключение ✨</button>
+      </div>
+    </section>
+
+    <section class="screen" id="game1">
+      <div class="topbar"><span>Испытание 1 из 3</span><strong id="heartCount">0 / 8</strong></div>
+      <div class="scene game-scene heart-scene">
+        <div class="mini-dragon">🐉</div>
+        <div class="bubble">Соберите восемь сердечек, чтобы вернуть любовь!</div>
+        <div id="heartField" class="heart-field"></div>
+      </div>
+      <div class="card compact"><h2>Соберите любовь</h2><p>Нажимайте на сердечки, пока они не улетели.</p></div>
+    </section>
+
+    <section class="screen" id="game2">
+      <div class="topbar"><span>Испытание 2 из 3</span><strong id="cakeCount">0 / 4</strong></div>
+      <div class="scene cake-scene">
+        <div class="bubble">Украсьте праздничный торт!</div>
+        <div id="cake" class="cake" aria-label="Праздничный торт">
+          <div class="cake-top"></div><div class="cake-middle"></div><div class="cake-bottom"></div>
+          <div id="cakeDecor" class="cake-decor"></div>
+        </div>
+        <div id="decorTray" class="decor-tray">
+          <button data-decor="🕯️">🕯️</button><button data-decor="🍓">🍓</button><button data-decor="🌸">🌸</button><button data-decor="⭐">⭐</button>
+        </div>
+      </div>
+      <div class="card compact"><h2>Добавьте четыре украшения</h2><p>Можно выбирать любые — здесь невозможно ошибиться.</p></div>
+    </section>
+
+    <section class="screen" id="game3">
+      <div class="topbar"><span>Испытание 3 из 3</span><strong>Найдите подарок</strong></div>
+      <div class="scene gift-scene">
+        <div class="bubble">Один из подарков хранит праздничное чудо!</div>
+        <div id="gifts" class="gifts">
+          <button class="gift" data-gift="0">🎁</button><button class="gift" data-gift="1">🎁</button><button class="gift" data-gift="2">🎁</button>
+          <button class="gift" data-gift="3">🎁</button><button class="gift" data-gift="4">🎁</button><button class="gift" data-gift="5">🎁</button>
+        </div>
+        <p id="giftHint" class="hint">Выберите коробку</p>
+      </div>
+    </section>
+
+    <section class="screen" id="final">
+      <div class="final-glow"></div>
+      <div class="card final-card">
+        <div class="final-dragon">🐉</div>
+        <p class="eyebrow">Праздничная магия спасена!</p>
+        <h2>С годовщиной свадьбы!</h2>
+        <p class="poem">Любовь — не волшебство.<br>Но именно она создаёт настоящие чудеса.</p>
+        <div class="wish">
+          <p>Дорогие мама и папа!</p>
+          <p>Спасибо за любовь, тепло и семью, которую вы создали. Желаем вам здоровья, радости, взаимопонимания и ещё много счастливых лет рядом друг с другом.</p>
+          <strong>С любовью, от нас ❤️</strong>
+        </div>
+        <button id="hug" class="primary">Обнять дракончика 🤗</button>
+        <button id="restart" class="secondary">Пройти ещё раз</button>
+      </div>
+      <div id="confetti" class="confetti" aria-hidden="true"></div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
