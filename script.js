@@ -104,7 +104,7 @@
     hearts = 0;
     const field = document.getElementById("heartField");
     field.innerHTML = "";
-    document.getElementById("heartCount").textContent = "0 / 8";
+    document.getElementById("heartCount").textContent = "0 / 27";
     document.querySelector("#game1 .progress i").style.width = "0%";
     clearInterval(heartTimer);
     spawnHeart();
@@ -112,7 +112,7 @@
   }
 
   function spawnHeart() {
-    if (hearts >= 8 || state.screen !== "game1") return;
+    if (hearts >= 27 || state.screen !== "game1") return;
     const field = document.getElementById("heartField");
     const heart = document.createElement("button");
     heart.className = "flying-heart";
@@ -127,10 +127,10 @@
       tone(560 + hearts * 45, .1, "triangle");
       heart.textContent = "✨";
       heart.style.animation = "pop .3s ease";
-      document.getElementById("heartCount").textContent = hearts + " / 8";
-      document.querySelector("#game1 .progress i").style.width = hearts / 8 * 48 + "%";
+      document.getElementById("heartCount").textContent = hearts + " / 27";
+      document.querySelector("#game1 .progress i").style.width = hearts / 27 * 48 + "%";
       setTimeout(() => heart.remove(), 260);
-      if (hearts === 8) {
+      if (hearts === 27) {
         clearInterval(heartTimer);
         tone(880, .25);
         complete("game1", "game2");
