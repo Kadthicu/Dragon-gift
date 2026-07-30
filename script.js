@@ -206,7 +206,7 @@
     gift.dataset.used = "1";
     attempts++;
     const number = Number(gift.dataset.gift);
-    if (number === winningGift || attempts >= 3) {
+    if (number === winningGift) {
       gift.classList.add("open");
       gift.textContent = "✨";
       tone(940, .35, "triangle", .05);
@@ -214,10 +214,14 @@
       document.querySelector("#game3 .progress i").style.width = "100%";
       complete("game3", "final");
     } else {
-      gift.classList.add("shake");
-      gift.textContent = ["🧸", "🌸", "🍬"][Math.floor(Math.random() * 3)];
+      const distance = Math.abs(number - winningGift);
+      const direction = number < winningGift ? "правее" : "левее";
+      const warmth = distance === 1 ? "Совсем близко!" : distance === 2 ? "Магия уже теплее." : "Пока холодно.";
+      gift.classList.add("shake", "opened-empty");
+      gift.textContent = ["🧸", "🌸", "🍬"][(attempts - 1) % 3];
       tone(190, .12, "square", .02);
-      document.getElementById("giftHint").textContent = "Милый подарок! Но чудо в другой коробке";
+      document.getElementById("giftHint").textContent = warmth + " Ищите " + direction + " ✨";
+      document.querySelector("#game3 .progress i").style.width = Math.min(90, 68 + attempts * 5) + "%";
       setTimeout(() => gift.classList.remove("shake"), 500);
     }
   }));
